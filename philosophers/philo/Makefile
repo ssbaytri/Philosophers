@@ -3,7 +3,7 @@ NAME = philo
 CC = cc
 FLAGS = -Wall -Wextra -Werror
 
-SRC  = $(wildcard *.c)
+SRC  =	philo.c utils.c
 OBJ  = $(SRC:.c=.o)
  
 all: $(NAME)

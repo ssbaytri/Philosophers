@@ -6,14 +6,18 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/04/04 20:44:52 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/05/06 22:06:55 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int main()
+int main(int argc, char **argv)
 {
-	printf("Hello, World!\n");
-	return (0);
+	int i = 1;
+	while (i < argc)
+	{
+		printf("%s\n", argv[i]);
+		i++;
+	}
 }
