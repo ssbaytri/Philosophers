@@ -6,18 +6,18 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/05/19 21:46:43 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/05/20 00:55:05 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void *routine()
+int num = 0;
+
+void routine()
 {
-	printf("hello from thread\n");
-	sleep(3);
-	printf("ending thread\n");
-	return (NULL);
+	for (int i = 0; i < 10000000; i++)
+		num++;
 }
 
 int	main(int argc, char **argv)
@@ -25,8 +25,10 @@ int	main(int argc, char **argv)
 	(void)argc;
 	(void)argv;
 	pthread_t t1, t2;;
-	pthread_create(&t1, NULL, routine, NULL);
-	pthread_create(&t2, NULL, routine, NULL);
+	pthread_create(&t1, NULL, (void *)routine, NULL);
+	pthread_create(&t2, NULL, (void *)routine, NULL);
 	pthread_join(t1, NULL);
+	pthread_join(t2, NULL);
+	printf("number is: %d\n", num);
 	return (0);
 }
