@@ -1,7 +1,7 @@
 NAME = philo
 
 CC = cc
-FLAGS = -Wall -Wextra -Werror
+FLAGS = -Wall -Wextra -Werror -pthread
 
 SRC  =	philo.c utils.c
 OBJ  = $(SRC:.c=.o)
