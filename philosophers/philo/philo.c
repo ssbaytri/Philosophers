@@ -6,59 +6,30 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/05/27 18:30:06 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/05/27 21:48:35 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	free2(char **split, char *joined)
+static int	validate_args(int ac, char **av)
 {
-	int	i;
-
-	i = 0;
-	while (split[i])
+	if (ac < 5 || ac > 6 || !parse_args(ac, av))
 	{
-		free(split[i]);
-		i++;
-	}
-	free(joined);
-	free(split);
-}
-
-static int has_nega(int *nums)
-{
-	int i;
-
-	i = 0;
-	while (nums[i])
-	{
-		if (nums[i] < 0)
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-static int validate_args(int *args, int size)
-{
-	if (size < 4 || size > 5 || has_nega(args))
-	{
-		printf("Error: Invalid Args.\n");
-		free(args);
+		printf("Error: Invalid arguments.\n");
 		return (0);
 	}
 	return (1);
 }
 
-static int print_args(int *args, int size)
+static int	print_args(char **av)
 {
-	int i;
+	int	i;
 
-	i = 0;
-	while (i < size)
+	i = 1;
+	while (av[i])
 	{
-		printf("%d ", args[i]);
+		printf("%d ", ft_atoi(av[i]));
 		printf("\n");
 		i++;
 	}
@@ -67,14 +38,8 @@ static int print_args(int *args, int size)
 
 int	main(int argc, char **argv)
 {
-	int *args;
-	int size;
-
-	size = 0;
-	args = parce_nums(argc, argv, &size);
-	if (!validate_args(args, size))
+	if (!validate_args(argc, argv))
 		return (1);
-	print_args(args, size);
-	free(args);
+	print_args(argv);
 	return (0);
 }
