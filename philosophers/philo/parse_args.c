@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 18:01:56 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/05/27 21:46:41 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/05/27 21:56:31 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ int	parse_args(int ac, char **av)
 	i = 1;
 	while (i < ac)
 	{
-		if (!is_valid_number(av[i]) || ft_atoi(av[i]) == 0)
+		if (!is_valid_number(av[i]) || (ft_atoi(av[i]) == 0 && i < 5))
 			return (0);
 		i++;
 	}
