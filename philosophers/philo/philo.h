@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:44:13 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/05/28 21:02:06 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/05 23:31:22 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <string.h>
+# include <sys/time.h>
 
 typedef struct s_config
 {
