@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/11 22:58:47 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/11 23:47:06 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,17 @@ static int	validate_args(int ac, char **av)
 	return (1);
 }
 
-long get_time_ms(void)
+long	get_time_ms(void)
 {
-	struct timeval tv;
+	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-int init_forks(t_config *cfg)
+int	init_forks(t_config *cfg)
 {
-	int i;
+	int	i;
 
 	cfg->forks = malloc(sizeof(pthread_mutex_t) * cfg->philo_count);
 	if (!cfg->forks)
@@ -55,7 +55,25 @@ int init_forks(t_config *cfg)
 	return (1);
 }
 
-int init_config(t_config *cfg, int argc, char **argv)
+int	destroy_forks(t_config *cfg)
+{
+	int	i;
+
+	if (!cfg->forks)
+		return (1);
+	i = 0;
+	while (i < cfg->philo_count)
+	{
+		if (pthread_mutex_destroy(&cfg->forks[i]) != 0)
+			return (0);
+		i++;
+	}
+	free(cfg->forks);
+	cfg->forks = NULL;
+	return (1);
+}
+
+int	init_config(t_config *cfg, int argc, char **argv)
 {
 	memset(cfg, 0, sizeof(t_config));
 	cfg->philo_count = ft_atoi(argv[1]);
@@ -78,10 +96,33 @@ int init_config(t_config *cfg, int argc, char **argv)
 	return (1);
 }
 
+t_philo	*init_philos(t_config *cfg)
+{
+	t_philo	*philos;
+	int		i;
+
+	philos = malloc(sizeof(t_philo) * cfg->philo_count);
+	if (!philos)
+		return (NULL);
+	i = 0;
+	while (i < cfg->philo_count)
+	{
+		philos[i].id = i;
+		philos[i].times_eaten = 0;
+		philos[i].last_meal_time = cfg->start_time;
+		philos[i].left_fork = &cfg->forks[i];
+		philos[i].right_fork = &cfg->forks[(i + 1) % cfg->philo_count];
+		philos[i].config = cfg;
+		i++;
+	}
+	return (philos);
+}
+
 int	main(int argc, char **argv)
 {
-	t_config cfg;
-	
+	t_config	cfg;
+	t_philo		*philos;
+
 	if (!validate_args(argc, argv))
 		return (1);
 	if (!init_config(&cfg, argc, argv))
@@ -89,5 +130,13 @@ int	main(int argc, char **argv)
 		printf("Error: Failed to initialize config.\n");
 		return (1);
 	}
+	philos = init_philos(&cfg);
+	if (!philos)
+	{
+		printf("Error: Failed to initialize philosophers.\n");
+		destroy_forks(&cfg);
+		return (1);
+	}
+	destroy_forks(&cfg);
 	return (0);
 }
