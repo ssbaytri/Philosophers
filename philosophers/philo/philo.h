@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:44:13 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/05 23:31:22 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/11 22:37:18 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,18 @@ typedef struct s_config
 	int				time_to_eat;
 	int				time_to_sleep;
 	int				must_eat_count;
-	size_t			start_time;
+	long			start_time;
 	int				stop_simulation;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	print_mutex;
+	pthread_mutex_t *stop_mutex;
 }					t_config;
 
 typedef struct s_philo
 {
 	int				id;
 	int				times_eaten;
-	size_t			last_meal_time;
+	long			last_meal_time;
 	pthread_t		thread;
 	pthread_mutex_t	*left_fork;
 	pthread_mutex_t	*right_fork;
