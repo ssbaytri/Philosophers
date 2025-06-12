@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/11 23:47:06 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/12 22:51:23 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,75 @@ t_philo	*init_philos(t_config *cfg)
 		i++;
 	}
 	return (philos);
+}
+
+void	print_action(t_philo *philo, const char *action)
+{
+	long timestamp;
+
+	pthread_mutex_lock(&philo->config->print_mutex);
+	if (!philo->config->stop_simulation)
+	{
+		timestamp = get_time_ms() - philo->config->start_time;
+		printf("%ld %d %s\n", timestamp, philo->id, action);
+	}
+	pthread_mutex_unlock(&philo->config->print_mutex);
+}
+
+void	smart_sleep(int duration, t_philo *philo)
+{
+	long start;
+
+	start = get_time_ms();
+	while (!philo->config->stop_simulation)
+	{
+		if ((get_time_ms() - start) >= duration)
+			break ;
+		usleep(100);
+	}
+}
+
+void take_forks(t_philo *philo)
+{
+	if (philo->id % 2 == 0)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		print_action(philo, "has taken a fork");
+		pthread_mutex_lock(philo->right_fork);
+		print_action(philo, "has taken a fork");
+	}
+	else
+	{
+		pthread_mutex_lock(philo->right_fork);
+		print_action(philo, "has taken a fork");
+		pthread_mutex_lock(philo->left_fork);
+		print_action(philo, "has taken a fork");
+	}
+}
+
+void	release_forks(t_philo *philo)
+{
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
+}
+
+void	*philo_routine(void *arg)
+{
+	t_philo *philo = (t_philo *)arg;
+	if (philo->id % 2 == 0)
+		usleep(100);
+	while (!should_stop(philo))
+	{
+		take_forks(philo);
+		start_eating(philo);
+		release_forks(philo);
+		if (has_eaten_enough(philo))
+			break ;
+		print_action(philo, "is sleeping");
+		smart_sleep(philo->config->time_to_sleep, philo);
+		print_action(philo, "is thinking");
+	}
+	return (NULL);
 }
 
 int	main(int argc, char **argv)
