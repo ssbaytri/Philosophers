@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/12 22:51:23 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/13 19:55:18 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,21 @@ void	release_forks(t_philo *philo)
 	pthread_mutex_unlock(philo->right_fork);
 }
 
+void start_eating(t_philo *philo)
+{
+	print_action(philo, "is eating");
+	philo->last_meal_time = get_time_ms();
+	philo->times_eaten++;
+	smart_sleep(philo->config->time_to_eat, philo);
+}
+
+int had_eaten_enough(t_philo *philo)
+{
+	if (philo->config->must_eat_count == -1)
+		return (0);
+	return (philo->times_eaten >= philo->config->must_eat_count);
+}
+
 void	*philo_routine(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
@@ -187,10 +202,57 @@ void	*philo_routine(void *arg)
 	return (NULL);
 }
 
+int all_philos_ate(t_philo *philos, t_config *cfg)
+{
+	int i;
+	
+	if (cfg->must_eat_count == -1)
+		return (0);
+	i = 0;
+	while (i < cfg->philo_count)
+	{
+		if (philos[i].times_eaten < cfg->must_eat_count)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+void start_monitor(t_philo *philos, t_config *cfg)
+{
+	int i;
+	long now;
+
+	while (!cfg->stop_simulation)
+	{
+		i = 0;
+		while (i < cfg->philo_count)
+		{
+			now = get_time_ms();
+			if ((now - philos[i].last_meal_time) >= cfg->time_to_die)
+			{
+				cfg->stop_simulation = 1;
+				pthread_mutex_lock(&cfg->print_mutex);
+				printf("%ld %d died\n", now - cfg->start_time, philos[i].id);
+				pthread_mutex_unlock(&cfg->print_mutex);
+				return ;
+			}
+			i++;
+		}
+		if (all_philos_ate(philos, cfg))
+		{
+			cfg->stop_simulation = 1;
+			return ;
+		}
+		usleep(1000);
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	t_config	cfg;
 	t_philo		*philos;
+	int i;
 
 	if (!validate_args(argc, argv))
 		return (1);
@@ -206,6 +268,26 @@ int	main(int argc, char **argv)
 		destroy_forks(&cfg);
 		return (1);
 	}
+	i = 0;
+	while (i < cfg.philo_count)
+	{
+		if (pthread_create(&philos[i].thread, NULL, philo_routine, &philos[i]) != 0)
+		{
+			printf("Error: Failed to create philosopher thread.\n");
+			free(philos);
+			destroy_forks(&cfg);
+			return (1);
+		}
+		i++;
+	}
+	start_monitor(philos, &cfg);
+	i = 0;
+	while (i < cfg.philo_count)
+	{
+		pthread_join(philos[i].thread, NULL);
+		i++;
+	}
 	destroy_forks(&cfg);
+	free(philos);
 	return (0);
 }
