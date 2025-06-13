@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/13 19:55:18 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/13 20:03:43 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,12 +176,23 @@ void start_eating(t_philo *philo)
 	smart_sleep(philo->config->time_to_eat, philo);
 }
 
-int had_eaten_enough(t_philo *philo)
+int has_eaten_enough(t_philo *philo)
 {
 	if (philo->config->must_eat_count == -1)
 		return (0);
 	return (philo->times_eaten >= philo->config->must_eat_count);
 }
+
+int	should_stop(t_philo *philo)
+{
+	int	stop;
+
+	pthread_mutex_lock(&philo->config->stop_mutex);
+	stop = philo->config->stop_simulation;
+	pthread_mutex_unlock(&philo->config->stop_mutex);
+	return (stop);
+}
+
 
 void	*philo_routine(void *arg)
 {
