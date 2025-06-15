@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/13 22:33:23 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/15 23:47:27 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,6 +197,15 @@ int	should_stop(t_philo *philo)
 void	*philo_routine(void *arg)
 {
 	t_philo *philo = (t_philo *)arg;
+	if (philo->config->philo_count == 1)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		print_action(philo, "has taken a fork");
+		while (!should_stop(philo))
+			usleep(100);
+		pthread_mutex_unlock(philo->left_fork);
+		return (NULL);
+	}
 	if (philo->id % 2 == 0)
 		usleep(100);
 	while (!should_stop(philo))
