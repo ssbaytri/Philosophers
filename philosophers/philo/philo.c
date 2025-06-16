@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/16 22:09:08 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/16 23:55:35 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,6 +95,8 @@ int	init_config(t_config *cfg, int argc, char **argv)
 		return (0);
 	if (pthread_mutex_init(&cfg->stop_mutex, NULL) != 0)
 		return (0);
+	if (pthread_mutex_init(&cfg->meal_mutex, NULL) != 0)
+		return (0);
 	return (1);
 }
 
@@ -109,7 +111,7 @@ t_philo	*init_philos(t_config *cfg)
 	i = 0;
 	while (i < cfg->philo_count)
 	{
-		philos[i].id = i;
+		philos[i].id = i + 1;
 		philos[i].times_eaten = 0;
 		philos[i].last_meal_time = cfg->start_time;
 		philos[i].left_fork = &cfg->forks[i];
@@ -125,11 +127,13 @@ void	print_action(t_philo *philo, const char *action)
 	long timestamp;
 
 	pthread_mutex_lock(&philo->config->print_mutex);
+	pthread_mutex_lock(&philo->config->stop_mutex);
 	if (!philo->config->stop_simulation)
 	{
 		timestamp = get_time_ms() - philo->config->start_time;
 		printf("%ld %d %s\n", timestamp, philo->id, action);
 	}
+	pthread_mutex_unlock(&philo->config->stop_mutex);
 	pthread_mutex_unlock(&philo->config->print_mutex);
 }
 
@@ -142,13 +146,13 @@ void	smart_sleep(int duration, t_philo *philo)
 	{
 		if ((get_time_ms() - start) >= duration)
 			break ;
-		usleep(100);
+		usleep(500);
 	}
 }
 
 void take_forks(t_philo *philo)
 {
-	if (philo->id % 2 == 0)
+	if (philo->id % 2 == 1)
 	{
 		pthread_mutex_lock(philo->left_fork);
 		print_action(philo, "has taken a fork");
@@ -173,16 +177,25 @@ void	release_forks(t_philo *philo)
 void start_eating(t_philo *philo)
 {
 	print_action(philo, "is eating");
+	pthread_mutex_lock(&philo->config->meal_mutex);
 	philo->last_meal_time = get_time_ms();
 	philo->times_eaten++;
+	pthread_mutex_unlock(&philo->config->meal_mutex);
 	smart_sleep(philo->config->time_to_eat, philo);
 }
 
 int has_eaten_enough(t_philo *philo)
 {
+	int eaten;
+	
 	if (philo->config->must_eat_count == -1)
 		return (0);
-	return (philo->times_eaten >= philo->config->must_eat_count);
+	
+	pthread_mutex_lock(&philo->config->meal_mutex);
+	eaten = philo->times_eaten;
+	pthread_mutex_unlock(&philo->config->meal_mutex);
+	
+	return (eaten >= philo->config->must_eat_count);
 }
 
 int	should_stop(t_philo *philo)
@@ -209,7 +222,7 @@ void	*philo_routine(void *arg)
 		return (NULL);
 	}
 	if (philo->id % 2 == 0)
-		usleep(100);
+		usleep(1000);
 	while (!should_stop(philo))
 	{
 		take_forks(philo);
@@ -220,6 +233,7 @@ void	*philo_routine(void *arg)
 		print_action(philo, "is sleeping");
 		smart_sleep(philo->config->time_to_sleep, philo);
 		print_action(philo, "is thinking");
+		usleep(100);
 	}
 	return (NULL);
 }
@@ -227,33 +241,58 @@ void	*philo_routine(void *arg)
 int all_philos_ate(t_philo *philos, t_config *cfg)
 {
 	int i;
+	int total_eaten = 0;
 	
 	if (cfg->must_eat_count == -1)
 		return (0);
+	
+	pthread_mutex_lock(&cfg->meal_mutex);
 	i = 0;
 	while (i < cfg->philo_count)
 	{
-		if (philos[i].times_eaten < cfg->must_eat_count)
-			return (0);
+		if (philos[i].times_eaten >= cfg->must_eat_count)
+			total_eaten++;
 		i++;
 	}
-	return (1);
+	pthread_mutex_unlock(&cfg->meal_mutex);
+	
+	return (total_eaten == cfg->philo_count);
+}
+
+void set_stop_flag(t_config *cfg)
+{
+	pthread_mutex_lock(&cfg->stop_mutex);
+	cfg->stop_simulation = 1;
+	pthread_mutex_unlock(&cfg->stop_mutex);
+}
+
+int should_stop_unlocked(t_config *cfg)
+{
+	int stop;
+	pthread_mutex_lock(&cfg->stop_mutex);
+	stop = cfg->stop_simulation;
+	pthread_mutex_unlock(&cfg->stop_mutex);
+	return (stop);
 }
 
 void start_monitor(t_philo *philos, t_config *cfg)
 {
 	int i;
 	long now;
+	long last_meal;
 
-	while (!cfg->stop_simulation)
+	while (!should_stop_unlocked(cfg))
 	{
 		i = 0;
-		while (i < cfg->philo_count)
+		while (i < cfg->philo_count && !should_stop_unlocked(cfg))
 		{
 			now = get_time_ms();
-			if ((now - philos[i].last_meal_time) >= cfg->time_to_die)
+			pthread_mutex_lock(&cfg->meal_mutex);
+			last_meal = philos[i].last_meal_time;
+			pthread_mutex_unlock(&cfg->meal_mutex);
+			if ((now - last_meal) >= cfg->time_to_die)
 			{
-				cfg->stop_simulation = 1;
+				set_stop_flag(cfg);
 				pthread_mutex_lock(&cfg->print_mutex);
 				printf("%ld %d died\n", now - cfg->start_time, philos[i].id);
 				pthread_mutex_unlock(&cfg->print_mutex);
@@ -263,11 +302,19 @@ void start_monitor(t_philo *philos, t_config *cfg)
 		}
 		if (all_philos_ate(philos, cfg))
 		{
-			cfg->stop_simulation = 1;
+			set_stop_flag(cfg);
 			return ;
 		}
 		usleep(1000);
 	}
+}
+
+void cleanup_config(t_config *cfg)
+{
+	destroy_forks(cfg);
+	pthread_mutex_destroy(&cfg->print_mutex);
+	pthread_mutex_destroy(&cfg->stop_mutex);
+	pthread_mutex_destroy(&cfg->meal_mutex);
 }
 
 int	main(int argc, char **argv)
@@ -287,7 +334,7 @@ int	main(int argc, char **argv)
 	if (!philos)
 	{
 		printf("Error: Failed to initialize philosophers.\n");
-		destroy_forks(&cfg);
+		cleanup_config(&cfg);
 		return (1);
 	}
 	i = 0;
@@ -297,7 +344,7 @@ int	main(int argc, char **argv)
 		{
 			printf("Error: Failed to create philosopher thread.\n");
 			free(philos);
-			destroy_forks(&cfg);
+			cleanup_config(&cfg);
 			return (1);
 		}
 		i++;
@@ -309,7 +356,7 @@ int	main(int argc, char **argv)
 		pthread_join(philos[i].thread, NULL);
 		i++;
 	}
-	destroy_forks(&cfg);
+	cleanup_config(&cfg);
 	free(philos);
 	return (0);
 }
