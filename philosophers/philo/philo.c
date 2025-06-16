@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/15 23:47:27 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/16 22:09:08 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,8 @@ int	init_config(t_config *cfg, int argc, char **argv)
 		return (0);
 	}
 	if (pthread_mutex_init(&cfg->print_mutex, NULL) != 0)
+		return (0);
+	if (pthread_mutex_init(&cfg->stop_mutex, NULL) != 0)
 		return (0);
 	return (1);
 }
