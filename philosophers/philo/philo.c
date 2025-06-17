@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/17 04:13:12 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/17 06:14:19 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,11 +63,101 @@ static int init_config(t_config *cfg, int ac, char **av)
 	return (1);
 }
 
+void init_philos(t_config *cfg, t_philo **philos)
+{
+	int i;
+
+	i = 0;
+	while (i < cfg->philo_count)
+	{
+		(*philos)[i].id = i;
+		(*philos)[i].config = cfg;
+		(*philos)[i].times_eaten = 0;
+		(*philos)[i].last_meal_time = get_time_ms();
+		(*philos)[i].full = 0;
+		i++;
+	}
+}
+
+int init_forks(t_config *cfg)
+{
+	int i;
+
+	i = 0;
+	while (i < cfg->philo_count)
+	{
+		if (pthread_mutex_init(&cfg->forks[i], NULL))
+		{
+			printf("Error: Failed to initialize mutex for fork %d.\n", i);
+			return (0);
+		}
+		i++;
+	}
+	return (1);
+}
+
+int setup(t_config *cfg, t_philo **philos)
+{
+	*philos = malloc(sizeof(t_philo) * cfg->philo_count);
+	if (!*philos)
+	{
+		printf("Error: Failed to allocate memory for philosophers.\n");
+		return (0);
+	}
+	init_philos(cfg, philos);
+	cfg->forks = malloc(sizeof(pthread_mutex_t) * cfg->philo_count);
+	if (!cfg->forks)
+	{
+		printf("Error: Failed to allocate memory for forks.\n");
+		free(*philos);
+		return (0);
+	}
+	if (!init_forks(cfg))
+	{
+		free(cfg->forks);
+		free(*philos);
+		return (0);
+	}
+	return (1);
+}
+
+void smart_sleep(long duration)
+{
+	long start;
+
+	start = get_time_ms();
+	while ((get_time_ms() - start) < duration)
+		usleep(100);
+}
+
+void print_action(char *action, t_philo *philo)
+{
+	pthread_mutex_lock(&philo->config->logs_mutex);
+	pthread_mutex_lock(&philo->config->stop_mutex);
+	if (philo->config->stop_simulation)
+	{
+		pthread_mutex_unlock(&philo->config->logs_mutex);
+		pthread_mutex_unlock(&philo->config->stop_mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->config->stop_mutex);
+	printf("%ld %d %s\n", get_time_ms() - philo->config->start_time, philo->id + 1, action);
+	pthread_mutex_unlock(&philo->config->logs_mutex);
+}
+
+void *philo_routine(void *arg)
+{
+	t_philo *philo;	
+	
+	philo =  (t_philo *)arg;
+	return NULL;
+}
+
 int main(int ac, char **av)
 {
 	t_config	cfg;
-	// t_philo		*philos;
-	// int i;
+	t_philo		*philos;
+	int i;
 	// pthread_t thread;
 	
 	if (!validate_args(ac, av))
@@ -77,5 +167,9 @@ int main(int ac, char **av)
 		printf("Error: Failed to initialize configuration.\n");
 		return (1);
 	}
-	
+	if (!setup(&cfg, &philos))
+		return (1);
+	i = -1;
+	while (++i < cfg.philo_count)
+		pthread_create(&philos[i].thread, NULL, philo_routine, &philos[i]);
 }
