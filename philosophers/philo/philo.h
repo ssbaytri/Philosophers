@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:44:13 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/16 23:11:54 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/17 04:03:36 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,17 @@ typedef struct s_config
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
+	int 			time_to_think;
 	int				must_eat_count;
+	int 			philo_full_count;
+	int				meal_exist;
 	long			start_time;
 	int				stop_simulation;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	eat_mutex;
 	pthread_mutex_t	stop_mutex;
-	pthread_mutex_t	meal_mutex;
+	pthread_mutex_t time_mutex;
+	pthread_mutex_t	logs_mutex;
 }					t_config;
 
 typedef struct s_philo
@@ -41,9 +45,8 @@ typedef struct s_philo
 	int				id;
 	int				times_eaten;
 	long			last_meal_time;
+	int				full;
 	pthread_t		thread;
-	pthread_mutex_t	*left_fork;
-	pthread_mutex_t	*right_fork;
 	t_config		*config;
 }					t_philo;
 
