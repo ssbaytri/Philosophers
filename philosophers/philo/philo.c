@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/17 06:14:19 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/19 07:58:31 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ static int init_config(t_config *cfg, int ac, char **av)
 		cfg->must_eat_count = -1;
 	if (pthread_mutex_init(&cfg->time_mutex, NULL) ||
 		pthread_mutex_init(&cfg->stop_mutex, NULL) ||
-		pthread_mutex_init(&cfg->logs_mutex, NULL) ||
+		pthread_mutex_init(&cfg->print_mutex, NULL) ||
 		pthread_mutex_init(&cfg->eat_mutex, NULL))
 		return (0);
 	cfg->philo_full_count = 0;
@@ -132,25 +132,73 @@ void smart_sleep(long duration)
 
 void print_action(char *action, t_philo *philo)
 {
-	pthread_mutex_lock(&philo->config->logs_mutex);
+	pthread_mutex_lock(&philo->config->print_mutex);
 	pthread_mutex_lock(&philo->config->stop_mutex);
 	if (philo->config->stop_simulation)
 	{
-		pthread_mutex_unlock(&philo->config->logs_mutex);
+		pthread_mutex_unlock(&philo->config->print_mutex);
 		pthread_mutex_unlock(&philo->config->stop_mutex);
 		return ;
 	}
 	pthread_mutex_unlock(&philo->config->stop_mutex);
 	printf("%ld %d %s\n", get_time_ms() - philo->config->start_time, philo->id + 1, action);
-	pthread_mutex_unlock(&philo->config->logs_mutex);
+	pthread_mutex_unlock(&philo->config->print_mutex);
 }
 
 void *philo_routine(void *arg)
 {
 	t_philo *philo;	
+	t_config *cfg;
 	
 	philo =  (t_philo *)arg;
-	return NULL;
+	cfg = philo->config;
+	while (1)
+	{
+		pthread_mutex_lock(&cfg->stop_mutex);
+		if (cfg->stop_simulation)
+		{
+			pthread_mutex_unlock(&cfg->stop_mutex);
+			break ;
+		}
+		pthread_mutex_unlock(&cfg->stop_mutex);
+		print_action("is thinking", philo);
+		if (philo->id % 2 == 0)
+		{
+			pthread_mutex_lock(&cfg->forks[philo->id]);
+			print_action("has taken a fork", philo);
+			pthread_mutex_lock(&cfg->forks[(philo->id + 1) % cfg->philo_count]);
+			print_action("has taken a fork", philo);
+		}
+		else
+		{
+			pthread_mutex_lock(&cfg->forks[(philo->id + 1) % cfg->philo_count]);
+			print_action("has taken a fork", philo);
+			pthread_mutex_lock(&cfg->forks[philo->id]);
+			print_action("has taken a fork", philo);
+		}
+		print_action("is eating", philo);
+		pthread_mutex_lock(&cfg->time_mutex);
+		philo->last_meal_time = get_time_ms();
+		pthread_mutex_unlock(&cfg->time_mutex);
+		
+		smart_sleep(cfg->time_to_eat);
+		
+		pthread_mutex_lock(&cfg->eat_mutex);
+		philo->times_eaten++;
+		if (cfg->must_eat_count > 0 && philo->times_eaten >= cfg->must_eat_count && !philo->full)
+		{
+			philo->full = 1;
+			cfg->philo_full_count++;
+		}
+		pthread_mutex_unlock(&cfg->eat_mutex);
+		
+		pthread_mutex_unlock(&cfg->forks[philo->id]);
+		pthread_mutex_unlock(&cfg->forks[(philo->id + 1) % cfg->philo_count]);
+
+		print_action("is sleeping", philo);
+		smart_sleep(cfg->time_to_sleep);
+	}
+	return (NULL);
 }
 
 int main(int ac, char **av)
@@ -158,7 +206,7 @@ int main(int ac, char **av)
 	t_config	cfg;
 	t_philo		*philos;
 	int i;
-	// pthread_t thread;
+	pthread_t monitor_thread;
 	
 	if (!validate_args(ac, av))
 		return (1);
