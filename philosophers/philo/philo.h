@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:44:13 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/19 07:43:57 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/20 03:22:18 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+
 
 typedef struct s_config
 {
@@ -38,6 +39,7 @@ typedef struct s_config
 	pthread_mutex_t	stop_mutex;
 	pthread_mutex_t time_mutex;
 	pthread_mutex_t	print_mutex;
+	struct s_philo *philos;
 }					t_config;
 
 typedef struct s_philo

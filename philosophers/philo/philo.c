@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/19 07:58:31 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/20 03:38:14 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ static int init_config(t_config *cfg, int ac, char **av)
 		return (0);
 	cfg->philo_full_count = 0;
 	cfg->stop_simulation = 0;
-	cfg->start_time = get_time_ms() + (10 * cfg->philo_count);
+	cfg->start_time = get_time_ms();
 	cfg->time_to_think = cfg->time_to_die - cfg->time_to_sleep;
 	if (cfg->philo_count % 2 != 0)
 		cfg->time_to_think += cfg->time_to_eat;
@@ -152,6 +152,14 @@ void *philo_routine(void *arg)
 	
 	philo =  (t_philo *)arg;
 	cfg = philo->config;
+	if (cfg->philo_count == 1)
+	{
+		pthread_mutex_lock(&cfg->forks[philo->id]);
+		print_action("has taken a fork", philo);
+		smart_sleep(cfg->time_to_die);
+		pthread_mutex_unlock(&cfg->forks[philo->id]);
+		return (NULL);
+	}
 	while (1)
 	{
 		pthread_mutex_lock(&cfg->stop_mutex);
@@ -201,6 +209,54 @@ void *philo_routine(void *arg)
 	return (NULL);
 }
 
+void *monitor(void *arg)
+{
+	t_config *cfg;
+	int i;
+
+	cfg = (t_config *)arg;
+	if (cfg->philo_count == 1)
+	{
+		smart_sleep(cfg->time_to_die);
+		print_action("died", &cfg->philos[0]);
+		pthread_mutex_lock(&cfg->stop_mutex);
+		cfg->stop_simulation = 1;
+		pthread_mutex_unlock(&cfg->stop_mutex);
+		return (NULL);
+	}
+	while (1)
+	{
+		pthread_mutex_lock(&cfg->eat_mutex);
+		if (cfg->must_eat_count > 0 && cfg->philo_full_count == cfg->philo_count)
+		{
+			pthread_mutex_unlock(&cfg->eat_mutex);
+			pthread_mutex_lock(&cfg->stop_mutex);
+			cfg->stop_simulation = 1;
+			pthread_mutex_unlock(&cfg->stop_mutex);
+			break ;	
+		}
+		pthread_mutex_unlock(&cfg->eat_mutex);
+		
+		for (i = 0; i < cfg->philo_count; i++)
+		{
+			pthread_mutex_lock(&cfg->time_mutex);
+			long time_since_eat = get_time_ms() - cfg->philos[i].last_meal_time;
+			pthread_mutex_unlock(&cfg->time_mutex);
+
+			if (time_since_eat > cfg->time_to_die)
+			{
+				print_action("died", &cfg->philos[i]);
+				pthread_mutex_lock(&cfg->stop_mutex);
+				cfg->stop_simulation = 1;
+				pthread_mutex_unlock(&cfg->stop_mutex);
+				return (NULL);
+			}
+		}
+		usleep(1000);
+	}
+	return (NULL);
+}
+
 int main(int ac, char **av)
 {
 	t_config	cfg;
@@ -218,6 +274,16 @@ int main(int ac, char **av)
 	if (!setup(&cfg, &philos))
 		return (1);
 	i = -1;
+	cfg.philos = philos;
 	while (++i < cfg.philo_count)
 		pthread_create(&philos[i].thread, NULL, philo_routine, &philos[i]);
+	pthread_create(&monitor_thread, NULL, monitor, &cfg);
+	for (i = 0; i < cfg.philo_count; i++)
+		pthread_join(philos[i].thread, NULL);
+	pthread_join(monitor_thread, NULL);
+	for (i = 0; i < cfg.philo_count; i++)
+		pthread_mutex_destroy(&cfg.forks[i]);
+	free(cfg.forks);
+	free(philos);
+	return (0);
 }
