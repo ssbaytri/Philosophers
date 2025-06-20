@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/20 03:38:14 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/20 07:33:29 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,6 +179,7 @@ void *philo_routine(void *arg)
 		}
 		else
 		{
+			usleep(100);
 			pthread_mutex_lock(&cfg->forks[(philo->id + 1) % cfg->philo_count]);
 			print_action("has taken a fork", philo);
 			pthread_mutex_lock(&cfg->forks[philo->id]);
@@ -237,10 +238,11 @@ void *monitor(void *arg)
 		}
 		pthread_mutex_unlock(&cfg->eat_mutex);
 		
+		long curr_time = get_time_ms();
 		for (i = 0; i < cfg->philo_count; i++)
 		{
 			pthread_mutex_lock(&cfg->time_mutex);
-			long time_since_eat = get_time_ms() - cfg->philos[i].last_meal_time;
+			long time_since_eat = curr_time - cfg->philos[i].last_meal_time;
 			pthread_mutex_unlock(&cfg->time_mutex);
 
 			if (time_since_eat > cfg->time_to_die)
@@ -252,7 +254,7 @@ void *monitor(void *arg)
 				return (NULL);
 			}
 		}
-		usleep(1000);
+		usleep(cfg->philo_count > 100 ? 500 : 1000);
 	}
 	return (NULL);
 }
@@ -275,6 +277,7 @@ int main(int ac, char **av)
 		return (1);
 	i = -1;
 	cfg.philos = philos;
+	cfg.start_time = get_time_ms();
 	while (++i < cfg.philo_count)
 		pthread_create(&philos[i].thread, NULL, philo_routine, &philos[i]);
 	pthread_create(&monitor_thread, NULL, monitor, &cfg);
