@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/20 07:33:29 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/20 08:16:22 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -254,7 +254,7 @@ void *monitor(void *arg)
 				return (NULL);
 			}
 		}
-		usleep(cfg->philo_count > 100 ? 500 : 1000);
+		usleep(500);
 	}
 	return (NULL);
 }
