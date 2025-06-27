@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:44:13 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/27 16:03:01 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/27 19:08:12 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,5 +58,10 @@ int					ft_atoi(const char *str);
 int					parse_args(int ac, char **av);
 long				get_time_ms(void);
 int					init_all(t_config *cfg, char **argv);
+
+int					already_dead(t_philo *philo);
+int					ft_usleep(long ms);
+void				print_log(t_philo *philo, const char *message);
+void				*monitor(void *arg);
 
 #endif

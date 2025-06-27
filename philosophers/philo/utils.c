@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:04:18 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/27 17:07:24 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/27 18:10:37 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,8 +61,11 @@ int ft_usleep(long ms)
 
 void	print_log(t_philo *philo, const char *message)
 {
-	long start;
+	long time;
 
 	pthread_mutex_lock(philo->log_mutex);
-	start = get_time_ms() - philo->start_time;
+	time = get_time_ms() - philo->start_time;
+	if (!already_dead(philo))
+		printf("%ld %d %s\n", time, philo->id, message);
+	pthread_mutex_unlock(philo->log_mutex);
 }
