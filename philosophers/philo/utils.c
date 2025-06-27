@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:04:18 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/27 15:17:23 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/27 17:07:24 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,4 +47,22 @@ long	get_time_ms(void)
 
 	gettimeofday(&tv, NULL);
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+int ft_usleep(long ms)
+{
+	long start;
+
+	start = get_time_ms();
+	while ((get_time_ms() - start) < ms)
+		usleep(500);
+	return (0);
+}
+
+void	print_log(t_philo *philo, const char *message)
+{
+	long start;
+
+	pthread_mutex_lock(philo->log_mutex);
+	start = get_time_ms() - philo->start_time;
 }

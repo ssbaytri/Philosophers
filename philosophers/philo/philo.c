@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/27 16:14:08 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/27 17:03:24 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,8 @@ static void	cleanup(t_config *cfg)
 	if (cfg->philos)
 		free(cfg->philos);
 }
+
+
 
 int	main(int ac, char **av)
 {
