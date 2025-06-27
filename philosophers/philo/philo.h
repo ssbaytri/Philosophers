@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:44:13 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/20 08:16:15 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/27 13:26:22 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,27 +28,29 @@ typedef struct s_config
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
-	int 			time_to_think;
-	int				must_eat_count;
-	int 			philo_full_count;
-	int				meal_exist;
-	long			start_time;
-	int				stop_simulation;
+	int				death_flag;
 	pthread_mutex_t	*forks;
-	pthread_mutex_t	eat_mutex;
-	pthread_mutex_t	stop_mutex;
-	pthread_mutex_t time_mutex;
-	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	meal_mutex;
+	pthread_mutex_t log_mutex;
+	pthread_mutex_t death_mutex;
 	struct s_philo *philos;
 }					t_config;
 
 typedef struct s_philo
 {
 	int				id;
+	int				eating;
+	int				*dead;
 	int				times_eaten;
+	int				must_eat_count;
 	long			last_meal_time;
-	int				full;
+	long			start_time;
 	pthread_t		thread;
+	pthread_mutex_t	*left_fork;
+	pthread_mutex_t *right_fork;
+	pthread_mutex_t	*meal_mutex;
+	pthread_mutex_t *log_mutex;
+	pthread_mutex_t *death_mutex;
 	t_config		*config;
 }					t_philo;
 
