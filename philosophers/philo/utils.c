@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:04:18 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/05/27 21:33:30 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/27 15:17:23 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,12 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	return ((int)(result * sign));
+}
+
+long	get_time_ms(void)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
