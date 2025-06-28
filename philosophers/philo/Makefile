@@ -3,7 +3,7 @@ NAME = philo
 CC = cc
 FLAGS = -Wall -Wextra -Werror -pthread #-g -fsanitize=address
 
-SRC  =	philo.c utils.c parse_args.c init.c
+SRC  =	philo.c utils.c parse_args.c init.c monitor.c threads.c actions.c
 OBJ  = $(SRC:.c=.o)
  
 all: $(NAME)

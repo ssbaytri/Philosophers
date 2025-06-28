@@ -6,22 +6,13 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/27 17:05:10 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/27 19:07:25 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/28 17:28:59 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int already_dead(t_philo *philo)
-{
-	pthread_mutex_lock(philo->death_mutex);
-	if (*philo->dead)
-		return (pthread_mutex_unlock(philo->death_mutex), 1);
-	pthread_mutex_unlock(philo->death_mutex);
-	return (0);
-}
-
-int check_philo_death(t_philo *philo)
+static int	check_philo_death(t_philo *philo)
 {
 	pthread_mutex_lock(philo->meal_mutex);
 	if ((get_time_ms() - philo->last_meal_time) >= philo->config->time_to_die)
@@ -30,9 +21,9 @@ int check_philo_death(t_philo *philo)
 	return (0);
 }
 
-int check_death(t_philo *philos)
+static int	check_death(t_philo *philos)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < philos->config->philo_count)
@@ -50,10 +41,10 @@ int check_death(t_philo *philos)
 	return (0);
 }
 
-int check_all_ate(t_philo *philos)
+static int	check_all_ate(t_philo *philos)
 {
-	int i;
-	int finished_philos;
+	int	i;
+	int	finished_philos;
 
 	i = 0;
 	finished_philos = 0;
@@ -77,15 +68,15 @@ int check_all_ate(t_philo *philos)
 	return (0);
 }
 
-void *monitor(void *arg)
+void	*monitor(void *arg)
 {
-	t_philo *philos;
+	t_philo	*philos;
 
 	philos = (t_philo *)arg;
-	while(1)
+	while (1)
 	{
 		if (check_death(philos) || check_all_ate(philos))
 			break ;
 	}
-	return (arg);
+	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:44:13 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/27 19:08:12 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/28 17:25:15 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,5 +63,11 @@ int					already_dead(t_philo *philo);
 int					ft_usleep(long ms);
 void				print_log(t_philo *philo, const char *message);
 void				*monitor(void *arg);
+
+void				thinking(t_philo *philo);
+void				sleeping(t_philo *philo);
+void				eating(t_philo *philo);
+
+int					simulation(t_config *cfg);
 
 #endif

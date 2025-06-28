@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/06 22:04:18 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/27 18:10:37 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/28 17:28:22 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,9 +49,9 @@ long	get_time_ms(void)
 	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
 }
 
-int ft_usleep(long ms)
+int	ft_usleep(long ms)
 {
-	long start;
+	long	start;
 
 	start = get_time_ms();
 	while ((get_time_ms() - start) < ms)
@@ -61,11 +61,20 @@ int ft_usleep(long ms)
 
 void	print_log(t_philo *philo, const char *message)
 {
-	long time;
+	long	time;
 
 	pthread_mutex_lock(philo->log_mutex);
 	time = get_time_ms() - philo->start_time;
 	if (!already_dead(philo))
 		printf("%ld %d %s\n", time, philo->id, message);
 	pthread_mutex_unlock(philo->log_mutex);
+}
+
+int	already_dead(t_philo *philo)
+{
+	pthread_mutex_lock(philo->death_mutex);
+	if (*philo->dead)
+		return (pthread_mutex_unlock(philo->death_mutex), 1);
+	pthread_mutex_unlock(philo->death_mutex);
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:42:57 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/27 17:03:24 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/28 17:25:26 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ static void	cleanup(t_config *cfg)
 		free(cfg->philos);
 }
 
-
-
 int	main(int ac, char **av)
 {
 	t_config	cfg;
@@ -57,6 +55,7 @@ int	main(int ac, char **av)
 		printf("Error: Initialization failed.\n");
 		return (cleanup(&cfg), 1);
 	}
+	simulation(&cfg);
 	cleanup(&cfg);
 	return (0);
 }
