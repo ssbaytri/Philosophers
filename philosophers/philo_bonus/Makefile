@@ -3,7 +3,7 @@ NAME = philo_bonus
 CC = cc
 FLAGS = -Wall -Wextra -Werror
 
-SRC  = $(wildcard *.c)
+SRC  = philo_bonus.c parsing_args_bonus.c utils_bonus.c
 OBJ  = $(SRC:.c=.o)
  
 all: $(NAME)

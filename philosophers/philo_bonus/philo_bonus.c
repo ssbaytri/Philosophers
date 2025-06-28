@@ -6,14 +6,25 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:51:25 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/04/04 20:52:00 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/28 21:01:59 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int main()
+static int	validate_args(int ac, char **av)
 {
-	printf("Hello, World!\n");
+	if (ac < 5 || ac > 6 || !parse_args(ac, av))
+	{
+		printf("Error: Invalid arguments.\n");
+		return (0);
+	}
+	return (1);
+}
+
+int	main(int ac, char **av)
+{
+	if (!validate_args(ac, av))
+		return (1);
 	return (0);
 }
