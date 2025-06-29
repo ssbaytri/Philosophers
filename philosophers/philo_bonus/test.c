@@ -24,7 +24,7 @@ int main()
 {
 	pthread_t threads[THREAD_NUM];
 	int i;
-	semaphore = sem_open("/my_sem", O_CREAT, 0644, 1);
+	semaphore = sem_open("/my_sem", O_CREAT, 0644, 4);
 	if (semaphore == SEM_FAILED)
 	{
 		perror("Failed to open semaphore");
