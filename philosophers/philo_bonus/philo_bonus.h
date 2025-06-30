@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:51:28 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/30 20:02:37 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/30 20:22:40 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <unistd.h>
 # include <sys/time.h>
+# include <unistd.h>
 
 typedef struct s_config
 {
@@ -52,7 +52,13 @@ int				parse_args(int ac, char **av);
 int				ft_atoi(const char *str);
 long			get_time_ms(void);
 int				ft_usleep(long ms);
+void			print_log(t_philo *philo, const char *message);
 
 void			cleanup_semaphores(void);
 int				init_all(t_config *cfg, char **argv);
+
+void			thinking(t_philo *philo);
+void			sleeping(t_philo *philo);
+void			eating(t_philo *philo);
+
 #endif
