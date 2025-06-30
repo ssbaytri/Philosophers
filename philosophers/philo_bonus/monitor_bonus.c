@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:23:21 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/30 21:03:37 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/30 21:51:28 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@ static int	check_death(t_philo *philo)
 	{
 		sem_wait(philo->config->death_sem);
 		printf("%ld %d died\n", get_time_ms() - philo->start_time, philo->id);
-		sem_post(philo->config->death_sem);
 		exit(1);
 	}
 	return (0);
