@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:51:25 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/30 20:02:03 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/06/30 21:01:10 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,36 @@ static void cleanup(t_config *cfg)
 	cleanup_semaphores();
 }
 
+static void kill_processes(t_config *cfg)
+{
+	int i;
+
+	i = 0;
+	while (i < cfg->philo_count)
+	{
+		kill(cfg->philos[i], SIGKILL);
+		i++;
+	}
+}
+
+static void wait_for_processes(t_config *cfg)
+{
+	int i;
+	int status;
+
+	i = 0;
+	while (i < cfg->philo_count)
+	{
+		waitpid(cfg->philos[i], &status, 0);
+		if (WEXITSTATUS(status) == 1)
+		{
+			kill_processes(cfg);
+			break ;
+		}
+		i++;
+	}
+}
+
 int	main(int ac, char **av)
 {
 	t_config cfg;
@@ -40,5 +70,8 @@ int	main(int ac, char **av)
 		printf("Error: Initialization failed.\n");
 		return (cleanup(&cfg), 1);
 	}
+	
+	wait_for_processes(&cfg);
+	cleanup(&cfg);
 	return (0);
 }

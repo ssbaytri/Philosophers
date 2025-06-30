@@ -3,7 +3,14 @@ NAME = philo_bonus
 CC = cc
 FLAGS = -Wall -Wextra -Werror -pthread # -g -fsanitize=address
 
-SRC  = philo_bonus.c parsing_args_bonus.c utils_bonus.c init_bonus.c actions_bonus.c processes_bonus.c
+SRC  = philo_bonus.c \
+	   parsing_args_bonus.c \
+	   init_bonus.c \
+	   actions_bonus.c \
+	   monitor_bonus.c \
+	   processes_bonus.c \
+	   utils_bonus.c \
+
 OBJ  = $(SRC:.c=.o)
  
 all: $(NAME)
