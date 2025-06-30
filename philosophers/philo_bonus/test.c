@@ -5,50 +5,44 @@
 #include <semaphore.h>
 #include <stdlib.h>
 #include <fcntl.h>
-
-#define THREAD_NUM 4
-
-sem_t *semaphore;
-
-void *routine(void *arg)
-{
-	sem_wait(semaphore);
-	sleep(1);
-	printf("Hello from theead %d\n", *(int *)arg);
-	sem_post(semaphore);
-	free(arg);
-	return NULL;
-}
+#include <sys/wait.h>
 
 int main()
 {
-	pthread_t threads[THREAD_NUM];
-	int i;
-	semaphore = sem_open("/my_sem", O_CREAT, 0644, 4);
-	if (semaphore == SEM_FAILED)
+	sem_t *sem;
+
+	sem = sem_open("/sem_test", O_CREAT | O_EXCL, 0644, 4);
+	if (sem == SEM_FAILED)
 	{
-		perror("Failed to open semaphore");
+		perror("sem_open");
 		return 1;
 	}
-	for (i = 0; i < THREAD_NUM; i++)
+
+	for (int i = 0; i < 4; i++)
 	{
-		int *a = malloc(sizeof(int));
-		*a = i;
-		if (pthread_create(&threads[i], NULL, &routine, a) != 0)
+		pid_t pid = fork();
+		if (pid == -1)
 		{
-			perror("Failed to create thread");
+			perror("fork");
+			sem_close(sem);
+			sem_unlink("/sem_test");
 			return 1;
 		}
-	}
-	for (i = 0; i < THREAD_NUM; i++)
-	{
-		if (pthread_join(threads[i], NULL) != 0)
+		if (pid == 0)
 		{
-			perror("Failed to join thread");
-			return 1;
+			sem_wait(sem);
+			printf("Child %d: acquired semaphore\n", i);
+			sleep(1);
+			sem_post(sem);
+			sem_close(sem);
+			exit(0);
 		}
 	}
-	sem_close(semaphore);
-	sem_unlink("/my_sem");
-	return 0;
+	for (int i = 0; i < 4; i++)
+	{
+		wait(NULL);
+	}
+	sem_close(sem);
+	sem_unlink("/sem_test");
+	return (0);
 }
