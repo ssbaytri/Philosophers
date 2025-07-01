@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 20:59:07 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/30 20:12:08 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/01 21:23:30 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void print_log(t_philo *philo, const char *message)
 	long time;
 
 	sem_wait(philo->config->log_sem);
-	time = get_time_ms() - philo->start_time;
+	time = get_time_ms() - philo->config->start_time;
 	printf("%ld %d %s\n", time, philo->id, message);
 	sem_post(philo->config->log_sem);
 }

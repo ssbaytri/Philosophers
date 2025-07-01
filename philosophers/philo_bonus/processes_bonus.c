@@ -6,32 +6,52 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:40:51 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/30 20:47:19 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/01 22:03:21 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void philo_process(t_config *cfg, int id)
+static void kill_processes(t_config *cfg)
 {
-	t_philo philo;
+	int i;
 
-	philo.id = id;
-	philo.times_eaten = 0;
-	philo.must_eat_count = cfg->must_eat_count;
-	philo.start_time = cfg->start_time;
-	philo.last_meal_time = get_time_ms();
-	philo.config = cfg;
-	pthread_create(&philo.monitor_thread, NULL, death_monitor, &philo);
-	pthread_detach(philo.monitor_thread);
-	if (philo.id % 2 == 0)
-		ft_usleep(1);
-	while (1)
+	i = 0;
+	while (i < cfg->philo_count)
 	{
-		eating(&philo);
-		sleeping(&philo);
-		thinking(&philo);
+		kill(cfg->philos[i], SIGTERM);
+		i++;
 	}
+}
+
+static void wait_processes(t_config *cfg)
+{
+	int i;
+	int status;
+
+	i = 0;
+	status = 0;
+	while (i < cfg->philo_count)
+	{
+		waitpid(-1, &status, 0);
+		if (status != 0)
+		{
+			kill_processes(cfg);
+			break ;
+		}
+		i++;
+	}
+}
+
+static void process_philo(t_config  *cfg, int id)
+{
+	t_philo *philo;
+	
+	philo->id = id;
+	philo->times_eaten = 0;
+	philo->last_meal_time = get_time_ms();
+	philo->config = cfg;
+	philo_routine(philo);
 }
 
 int simulation(t_config *cfg)
@@ -39,15 +59,12 @@ int simulation(t_config *cfg)
 	int i;
 
 	i = 0;
+	cfg->start_time = get_time_ms();
 	while (i < cfg->philo_count)
 	{
 		cfg->philos[i] = fork();
 		if (cfg->philos[i] == 0)
-		{
-			philo_process(cfg, i + 1);
-			exit(0);
-		}
+			process_philo(cfg, i + 1);
 		i++;
 	}
-	return (0);
 }

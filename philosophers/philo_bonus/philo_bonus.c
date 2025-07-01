@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:51:25 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/30 21:55:18 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/01 21:58:40 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,48 +26,11 @@ static void cleanup(t_config *cfg)
 {
 	if (cfg->philos)
 		free(cfg->philos);
+	sem_close(cfg->forks);
+	sem_close(cfg->log_sem);
+	sem_close(cfg->death_sem);
+	sem_close(cfg->meal_sem);
 	cleanup_semaphores();
-}
-
-static void kill_processes(t_config *cfg)
-{
-	int i;
-
-	i = 0;
-	while (i < cfg->philo_count)
-	{
-		kill(cfg->philos[i], SIGKILL);
-		i++;
-	}
-}
-
-static void wait_for_processes(t_config *cfg)
-{
-	int i;
-	int status;
-	int exited_count;
-
-	i = 0;
-	exited_count = 0;
-	while (i < cfg->philo_count)
-	{
-		waitpid(-1, &status, 0);
-		if (WIFEXITED(status))
-		{
-			int code = WEXITSTATUS(status);
-			if (code == 1) // Death
-			{
-				kill_processes(cfg);
-				break;
-			}
-			else if (code == 0) // Normal termination (finished eating)
-			{
-				exited_count++;
-				if (exited_count == cfg->philo_count)
-					break; // all are done
-			}
-		}
-	}
 }
 
 int	main(int ac, char **av)
@@ -82,7 +45,6 @@ int	main(int ac, char **av)
 		return (cleanup(&cfg), 1);
 	}
 	simulation(&cfg);
-	wait_for_processes(&cfg);
 	cleanup(&cfg);
 	return (0);
 }

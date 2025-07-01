@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:51:28 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/30 21:04:01 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/01 21:52:36 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,14 @@ typedef struct s_config
 	sem_t		*forks;
 	sem_t		*log_sem;
 	sem_t		*death_sem;
+	sem_t		*meal_sem;
 }				t_config;
 
 typedef struct s_philo
 {
 	int			id;
 	int			times_eaten;
-	int			must_eat_count;
 	long		last_meal_time;
-	long		start_time;
-	pthread_t	monitor_thread;
 	t_config	*config;
 }				t_philo;
 
@@ -57,12 +55,12 @@ void			print_log(t_philo *philo, const char *message);
 
 void			cleanup_semaphores(void);
 int				init_all(t_config *cfg, char **argv);
-void			*death_monitor(void *arg);
 
 void			thinking(t_philo *philo);
 void			sleeping(t_philo *philo);
 void			eating(t_philo *philo);
 
+void			philo_routine(t_philo *philo);
 int				simulation(t_config *cfg);
 
 #endif

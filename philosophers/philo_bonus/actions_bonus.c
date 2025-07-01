@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:09:51 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/30 20:22:14 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/01 21:33:22 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,17 +27,13 @@ void eating(t_philo *philo)
 {
 	sem_wait(philo->config->forks);
 	print_log(philo, "has taken a fork");
-	if (philo->config->philo_count == 1)
-	{
-		ft_usleep(philo->config->time_to_die);
-		sem_post(philo->config->forks);
-		return ;
-	}
 	sem_wait(philo->config->forks);
 	print_log(philo, "has taken a fork");
 	print_log(philo, "is eating");
+	sem_wait(philo->config->meal_sem);
 	philo->last_meal_time = get_time_ms();
 	philo->times_eaten++;
+	sem_post(philo->config->meal_sem);
 	ft_usleep(philo->config->time_to_eat);
 	sem_post(philo->config->forks);
 	sem_post(philo->config->forks);
