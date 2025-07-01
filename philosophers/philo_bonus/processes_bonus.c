@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:40:51 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/07/01 22:03:21 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/01 22:05:29 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,16 @@ static void wait_processes(t_config *cfg)
 
 static void process_philo(t_config  *cfg, int id)
 {
-	t_philo *philo;
+	t_philo philo;
 	
-	philo->id = id;
-	philo->times_eaten = 0;
-	philo->last_meal_time = get_time_ms();
-	philo->config = cfg;
-	philo_routine(philo);
+	philo.id = id;
+	philo.times_eaten = 0;
+	philo.last_meal_time = get_time_ms();
+	philo.config = cfg;
+	philo_routine(&philo);
 }
 
-int simulation(t_config *cfg)
+void simulation(t_config *cfg)
 {
 	int i;
 
@@ -67,4 +67,5 @@ int simulation(t_config *cfg)
 			process_philo(cfg, i + 1);
 		i++;
 	}
+	wait_processes(cfg);
 }
