@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:51:25 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/07/01 21:58:40 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/02 16:42:17 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ static int	validate_args(int ac, char **av)
 	return (1);
 }
 
-static void cleanup(t_config *cfg)
+static void	cleanup(t_config *cfg)
 {
 	if (cfg->philos)
 		free(cfg->philos);
@@ -35,7 +35,8 @@ static void cleanup(t_config *cfg)
 
 int	main(int ac, char **av)
 {
-	t_config cfg;
+	t_config	cfg;
+
 	if (!validate_args(ac, av))
 		return (1);
 	memset(&cfg, 0, sizeof(t_config));

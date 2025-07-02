@@ -6,13 +6,13 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 19:44:50 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/07/01 21:58:27 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/02 16:42:44 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void init_args(t_config *cfg, char **argv)
+static void	init_args(t_config *cfg, char **argv)
 {
 	cfg->philo_count = ft_atoi(argv[1]);
 	cfg->time_to_die = ft_atoi(argv[2]);
@@ -24,13 +24,14 @@ static void init_args(t_config *cfg, char **argv)
 		cfg->must_eat_count = -1;
 }
 
-static int init_semaphores(t_config *cfg)
+static int	init_semaphores(t_config *cfg)
 {
 	sem_unlink("/forks_sem");
 	sem_unlink("/log_sem");
 	sem_unlink("/death_sem");
 	sem_unlink("/meal_sem");
-	cfg->forks = sem_open("/forks_sem", O_CREAT | O_EXCL, 0644, cfg->philo_count);
+	cfg->forks = sem_open("/forks_sem", O_CREAT | O_EXCL, 0644,
+			cfg->philo_count);
 	if (cfg->forks == SEM_FAILED)
 		return (0);
 	cfg->death_sem = sem_open("/death_sem", O_CREAT | O_EXCL, 0644, 1);
@@ -45,7 +46,7 @@ static int init_semaphores(t_config *cfg)
 	return (1);
 }
 
-static int init_philos(t_config *cfg)
+static int	init_philos(t_config *cfg)
 {
 	cfg->philos = malloc(sizeof(pid_t) * cfg->philo_count);
 	if (!cfg->philos)
@@ -53,7 +54,7 @@ static int init_philos(t_config *cfg)
 	return (1);
 }
 
-void cleanup_semaphores(void)
+void	cleanup_semaphores(void)
 {
 	sem_unlink("/forks_sem");
 	sem_unlink("/log_sem");
@@ -61,7 +62,7 @@ void cleanup_semaphores(void)
 	sem_unlink("/meal_sem");
 }
 
-int init_all(t_config *cfg, char **argv)
+int	init_all(t_config *cfg, char **argv)
 {
 	init_args(cfg, argv);
 	if (!init_semaphores(cfg))

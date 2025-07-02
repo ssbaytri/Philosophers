@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 20:59:07 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/07/01 21:23:30 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/02 16:42:24 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,9 @@ int	ft_usleep(long ms)
 	return (0);
 }
 
-void print_log(t_philo *philo, const char *message)
+void	print_log(t_philo *philo, const char *message)
 {
-	long time;
+	long	time;
 
 	sem_wait(philo->config->log_sem);
 	time = get_time_ms() - philo->config->start_time;

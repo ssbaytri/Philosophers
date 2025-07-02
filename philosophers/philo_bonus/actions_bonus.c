@@ -6,24 +6,24 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:09:51 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/07/01 21:33:22 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/02 16:42:29 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-void thinking(t_philo *philo)
+void	thinking(t_philo *philo)
 {
 	print_log(philo, "is thinking");
 }
 
-void sleeping(t_philo *philo)
+void	sleeping(t_philo *philo)
 {
 	print_log(philo, "is sleeping");
 	ft_usleep(philo->config->time_to_sleep);
 }
 
-void eating(t_philo *philo)
+void	eating(t_philo *philo)
 {
 	sem_wait(philo->config->forks);
 	print_log(philo, "has taken a fork");

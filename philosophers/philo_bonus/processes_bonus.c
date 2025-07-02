@@ -6,15 +6,15 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 20:40:51 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/07/01 22:05:29 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/02 16:43:29 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void kill_processes(t_config *cfg)
+static void	kill_processes(t_config *cfg)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < cfg->philo_count)
@@ -24,10 +24,10 @@ static void kill_processes(t_config *cfg)
 	}
 }
 
-static void wait_processes(t_config *cfg)
+static void	wait_processes(t_config *cfg)
 {
-	int i;
-	int status;
+	int	i;
+	int	status;
 
 	i = 0;
 	status = 0;
@@ -43,10 +43,10 @@ static void wait_processes(t_config *cfg)
 	}
 }
 
-static void process_philo(t_config  *cfg, int id)
+static void	process_philo(t_config *cfg, int id)
 {
-	t_philo philo;
-	
+	t_philo	philo;
+
 	philo.id = id;
 	philo.times_eaten = 0;
 	philo.last_meal_time = get_time_ms();
@@ -54,9 +54,9 @@ static void process_philo(t_config  *cfg, int id)
 	philo_routine(&philo);
 }
 
-void simulation(t_config *cfg)
+void	simulation(t_config *cfg)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	cfg->start_time = get_time_ms();

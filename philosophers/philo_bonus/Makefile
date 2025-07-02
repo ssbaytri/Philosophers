@@ -1,4 +1,4 @@
-NAME = philo
+NAME = philo_bonus
 
 CC = cc
 FLAGS = -Wall -Wextra -Werror -pthread # -g -fsanitize=address

@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/04 20:51:28 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/07/01 22:35:51 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/02 16:43:03 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,6 @@ void			sleeping(t_philo *philo);
 void			eating(t_philo *philo);
 
 void			philo_routine(t_philo *philo);
-void				simulation(t_config *cfg);
+void			simulation(t_config *cfg);
 
 #endif
