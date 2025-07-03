@@ -6,7 +6,7 @@
 /*   By: ssbaytri <ssbaytri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/28 14:46:24 by ssbaytri          #+#    #+#             */
-/*   Updated: 2025/06/28 17:29:35 by ssbaytri         ###   ########.fr       */
+/*   Updated: 2025/07/03 21:26:46 by ssbaytri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,12 +18,12 @@ static void	*philo_routine(void *arg)
 
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
-		ft_usleep(1);
+		sleeping(philo);
 	while (!already_dead(philo))
 	{
+		thinking(philo);
 		eating(philo);
 		sleeping(philo);
-		thinking(philo);
 	}
 	return (NULL);
 }
