@@ -227,7 +227,7 @@ Consider testing with various scenarios:
 ---
 
 <p>
-  <strong>Made with ❤️ by [$ubZ3r0]</strong><br>
+  <strong>Made with ❤️ by $ubZ3r0</strong><br>
   <em>42 School Student | Software Developer</em>
 </p>
 
