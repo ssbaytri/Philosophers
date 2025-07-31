@@ -1,7 +1,7 @@
 # Philosophers
 
 <!-- Add your header image here -->
-<img src="https://drive.google.com/uc?id=1YW80HjDtAuGa4OgQHYgm1B49gpDmMjYK" alt="Philosophers" width="100%">
+<img src="https://drive.google.com/uc?id=1Eu68KX2zojsb3h0kDgCGgXbguJZDB4pF" alt="Philosophers" width="100%">
 
 > *"I never thought philosophy would be so deadly"*
 
