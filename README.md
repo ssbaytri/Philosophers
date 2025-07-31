@@ -1,11 +1,37 @@
 # Philosophers
 
-<!-- Add your header image here -->
 <img src="https://drive.google.com/uc?id=1Eu68KX2zojsb3h0kDgCGgXbguJZDB4pF" alt="Philosophers" width="100%">
 
-> *"I never thought philosophy would be so deadly"*
+<div align="center">
+
+[![42 School](https://img.shields.io/badge/42-School-000000?style=for-the-badge&logo=42&logoColor=white)](https://42.fr)
+[![C](https://img.shields.io/badge/C-00599C?style=for-the-badge&logo=c&logoColor=white)](https://en.wikipedia.org/wiki/C_(programming_language))
+[![Threads](https://img.shields.io/badge/Threads-FF6B6B?style=for-the-badge&logo=cplusplus&logoColor=white)](https://en.wikipedia.org/wiki/Thread_(computing))
+[![Mutex](https://img.shields.io/badge/Mutex-4ECDC4?style=for-the-badge&logo=lock&logoColor=white)](https://en.wikipedia.org/wiki/Mutex)
+[![Semaphore](https://img.shields.io/badge/Semaphore-45B7D1?style=for-the-badge&logo=traffic-light&logoColor=white)](https://en.wikipedia.org/wiki/Semaphore_(programming))
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+[![Made with Love](https://img.shields.io/badge/Made%20with-❤️-red.svg?style=for-the-badge)](https://github.com/yourusername)
+
+</div>
+
+<p align="center">
+  <em>"I never thought philosophy would be so deadly"</em>
+</p>
+
+<p align="center">
+  <strong>A 42 School project exploring concurrent programming through the classic Dining Philosophers Problem</strong>
+</p>
 
 ## 📖 Overview
+
+<div align="center">
+
+| 🎯 **Objective** | 🧠 **Skills** | ⚡ **Difficulty** |
+|:----------------:|:-------------:|:-----------------:|
+| Threading & Synchronization | Concurrent Programming | ⭐⭐⭐⭐☆ |
+
+</div>
 
 The **Philosophers** project is a classic computer science problem that explores the fundamentals of threading, process synchronization, and resource management. This project simulates the famous "Dining Philosophers Problem" where philosophers sit around a table, alternating between eating, thinking, and sleeping while sharing limited resources (forks).
 
@@ -36,28 +62,50 @@ The **Philosophers** project is a classic computer science problem that explores
 
 ## 🚀 Usage
 
-### Mandatory Part (Threads & Mutexes)
+<div align="center">
+
+### 🧵 Mandatory Part (Threads & Mutexes)
 ```bash
 ./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
 ```
 
-### Bonus Part (Processes & Semaphores)
+### 🔄 Bonus Part (Processes & Semaphores)
 ```bash
 ./philo_bonus number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
 ```
 
-### Parameters
-- **number_of_philosophers**: Number of philosophers and forks
-- **time_to_die** (ms): Maximum time between meals before death
-- **time_to_eat** (ms): Time spent eating (holding two forks)
-- **time_to_sleep** (ms): Time spent sleeping
-- **number_of_times_each_philosopher_must_eat** (optional): Simulation stops when all philosophers have eaten this many times
+</div>
 
-### Example
+### 📊 Parameters
+
+<div align="center">
+
+| Parameter | Description | Unit |
+|:---------:|:------------|:----:|
+| `number_of_philosophers` | Number of philosophers and forks | count |
+| `time_to_die` | Maximum time between meals before death | ms |
+| `time_to_eat` | Time spent eating (holding two forks) | ms |
+| `time_to_sleep` | Time spent sleeping | ms |
+| `number_of_times_each_philosopher_must_eat` | Optional: stops when all have eaten N times | count |
+
+</div>
+
+### 💡 Examples
+
+<div align="center">
+
 ```bash
+# Basic simulation with 5 philosophers
 ./philo 5 800 200 200
+
+# Simulation that stops after each philosopher eats 5 times
 ./philo 4 410 200 200 5
+
+# Bonus version with processes
+./philo_bonus 3 600 150 150
 ```
+
+</div>
 
 ## 📋 Program Output
 
@@ -78,17 +126,16 @@ timestamp_in_ms X died
 
 ## 🏗️ Implementation Details
 
-### Mandatory Part
-- **Technology**: Threads and Mutexes
-- **Structure**: Each philosopher = separate thread
-- **Synchronization**: One mutex per fork to prevent duplication
-- **Directory**: `philo/`
+<div align="center">
 
-### Bonus Part
-- **Technology**: Processes and Semaphores
-- **Structure**: Each philosopher = separate process
-- **Synchronization**: Semaphores represent available forks
-- **Directory**: `philo_bonus/`
+| Feature | Mandatory Part | Bonus Part |
+|:-------:|:--------------:|:----------:|
+| **Technology** | 🧵 Threads & Mutexes | 🔄 Processes & Semaphores |
+| **Structure** | Each philosopher = thread | Each philosopher = process |
+| **Synchronization** | One mutex per fork | Semaphores for available forks |
+| **Directory** | `philo/` | `philo_bonus/` |
+
+</div>
 
 ## 🛠️ Compilation
 
@@ -169,8 +216,19 @@ Consider testing with various scenarios:
 
 ---
 
-**Version**: 12.0  
-**School**: 42  
-**Difficulty**: ⭐⭐⭐⭐☆
+<div align="center">
+
+**Version**: 12.0 | **School**: 42 | **Difficulty**: ⭐⭐⭐⭐☆
+
+<img src="https://img.shields.io/badge/Grade-125%2F100-brightgreen?style=for-the-badge" alt="Grade">
 
 *Remember: The goal isn't just to make it work, but to understand the underlying concepts of concurrent programming and resource synchronization.*
+
+---
+
+<p>
+  <strong>Made with ❤️ by [Your Name]</strong><br>
+  <em>42 School Student | Software Developer</em>
+</p>
+
+</div>
